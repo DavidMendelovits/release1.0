@@ -1,0 +1,19 @@
+{
+  "name": "pdfreader",
+  "version": "1.0.0",
+  "description": "Parse some pdfs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node pdf.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^2.6.347",
+    "pdfreader": "^1.2.8",
+    "puppeteer": "^7.0.1",
+    "tesseract.js": "^2.1.4"
+  }
+}
