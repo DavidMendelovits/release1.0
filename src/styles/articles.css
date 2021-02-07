@@ -1,0 +1,16 @@
+.articles-container {
+    align-self: center;
+    height: 50%;
+    overflow: scroll;
+    /* background-color: aquamarine; */
+}
+.articles-index {
+    background-color: grey;
+}
+
+.article-container {
+    border-radius: 2px;
+    border-color: black;
+    border: 5px;
+    outline: thin;
+}

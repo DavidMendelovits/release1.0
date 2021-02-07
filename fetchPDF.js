@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const fs = require('fs')
 async function getArticlesToIndex() {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -82,6 +83,7 @@ async function getArticlesToIndex() {
   await page.goto('https://sbw.org/release1.0/');
  
   articles = articles.filter((article) => article.url.includes('downloads.oreilly'))
+  fs.writeFileSync('articleLinks.json', JSON.stringify(articles))
   for (article of articles) {
       console.log(article)
       try {

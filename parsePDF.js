@@ -1,9 +1,17 @@
 
 
 var pdfjsLib = require("pdfjs-dist/es5/build/pdf.js");
-
-let pdfPath = '01-83.pdf'
+var links = require('./articleLinks.json')
 var fs = require('fs')
+
+function getLinkForArticle (pdfName) {
+  for (let info of links) {
+    // console.log('info', info)
+    if (info.url.includes(pdfName.replace('.pdf', ''))) {
+      return info
+    }
+  }
+}
 
 async function parsePDF(path) {
   var loadingTask = pdfjsLib.getDocument(path);
@@ -30,29 +38,85 @@ async function parsePDF(path) {
       for (let lineNo in page) {
         if (page[lineNo].match(/inside/i) || page[lineNo].match(/contents/i)) {
             console.log(" table of contents found!")
-            toc = page.slice((Number(lineNo) + Number(1)))
+            toc = page.slice((Number(lineNo) + Number(1)), (Number(page.length) - Number(5)))
             break;
         }
       }
-      let txtFile = path.replace('.pdf', '.txt')
-      fs.writeFileSync(txtFile, toc.join('\n'))
+      let txtFile = path.replace('.pdf', '.json')
+      let linkForArticle = getLinkForArticle(txtFile.replace('src/articles/', '').replace('.json', ''))
+      for (let lineNo in toc) {
+        if (page[lineNo].match(/inside/i) || page[lineNo].match(/contents/i)) {
+          console.log(" table of contents found AGAIN!!")
+          toc = page.slice((Number(lineNo) + Number(1)), (Number(page.length) - Number(5)))
+          break;
+        } 
+      }
+
+      // let tokens = []
+      // let headers = []
+      // let header_position = 0
+      // let i = 0;
+      // let strings = []
+      // let numbers = []
+      // while(toc[i]) {
+      //   //N
+      //   let hasNumber = toc[i].match(/\d/)
+      //   let hasAlpha = toc[i].match(/[a-z]/i)
+      //   if (hasNumber && hasAlpha) {
+      //     let expressions = toc[i].split(' ')
+      //     let number = expressions.filter((e) => e.match(/^[0-9]+$/))
+      //     let other = expressions.filter(e => e.match(/^[a-zA-Z]*$/))
+      //     let header = {}
+      //     header.pageNumber = number
+      //     header.content = other.join(' ')
+      //     if (strings.length > 1 && header_position > 0) {
+      //       headers[header_position].moreContent = strings
+      //     }
+      //     headers.push(header)
+      //     header_position += 1 
+      //   } else if ((parseInt(toc[i]) || toc[i] == 0) && i > 0) {
+      //     // toc[i-1] += " - " + toc[i]
+      //     // toc[i] = ''
+      //     if (strings.length) {
+      //       let header = {}
+      //       header.pageNumber = toc[i]
+      //       header.content = strings.pop()
+      //       if (strings.length > 1 && header_position > 0) {
+      //         headers[header_position].moreContent = strings
+      //       }
+      //       headers.push(header)
+      //       header_position += 1
+      //     }
+      //   } else if (toc[i].length == 1) {
+
+      //   } else {
+      //     //S
+      //     strings.push(toc[i])
+      //   }
+      //   i += 1;
+      // }
+      // console.log('headers', headers)
+      fs.writeFileSync(txtFile, JSON.stringify({
+        contents: toc.join('\n'),
+        url: linkForArticle.url,
+        publishDate: linkForArticle.publishDate
+      }))
   }).catch(err => {
     console.log('err', err)
   })
 }
 
-let articles = fs.readdirSync('articles')
+let articles = fs.readdirSync('src/articles')
 articles = articles.filter(article => article.includes('.pdf'))
 console.log(articles)
 articles = articles.map(article => {
-  return "articles/" + article
+  return "src/articles/" + article
 })
 console.log(articles)
 
 for (articlePath of articles) {
 
   try {
-    console.log('articl', articlePath)
     parsePDF(articlePath)
   } catch (e) {
     console.log(e)
@@ -60,7 +124,9 @@ for (articlePath of articles) {
   
 }
 
-
+module.exports = {
+  parsePDF
+}
 
 
 
