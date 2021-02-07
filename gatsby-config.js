@@ -8,5 +8,6 @@ module.exports = {
               path: `${__dirname}/src/articles/`,
             },
         }
-    ]
+    ],
+    pathPrefix: '/release1.0'
 }

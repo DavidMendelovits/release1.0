@@ -4,8 +4,10 @@ import React, {
 } from 'react'
 import { graphql, useStaticQuery } from "gatsby"
 import * as JsSearch from 'js-search';
+import FlatList from 'flatlist-react';
 
 const Articles = ({ items }) => {
+    if (!items) return (<div>Sorry!</div>)
     let search
     let [searchTerm, setSearchTerm] = useState('')
     search = new JsSearch.Search('name')
@@ -25,23 +27,47 @@ const Articles = ({ items }) => {
         setResults(searchResults)
     }
     
+    const renderArticleListing = (article, idx) => {
+        return (
+            <div key={idx}>
+                <b>
+                    <a href={article.url}>
+                        {article.name}
+                    </a>
+                </b>
+            </div>
+        )
+    }
+
     return (
         <div className={"articles-index"}>
-            <input
-                // onChange={e => updateSearchTerm(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key == 'Enter') {
-                        setSearchTerm(e.target.value)
-                        updateSearch(e.target.value)
-                    }
-                }}
-            >
+            <form>
+                <label>
+                    Search: 
+                    <input
+                        // onChange={e => updateSearchTerm(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key == 'Enter') {
+                                e.preventDefault()
+                                setSearchTerm(e.target.value)
+                                updateSearch(e.target.value)
+                            }
+                        }}
+                    />
+                </label>
+            </form>
+            {/* 
             </input>
             <button onClick={() => updateSearch(searchTerm)}>
                 click/enter
-            </button>
+            </button> */}
             <div className="articles-container">
-            {
+                <FlatList 
+                    list={results}
+                    renderItem={renderArticleListing}
+                    renderWhenEmpty={() => <div>List is empty!</div>}
+                />
+            {/* {
                 results.map((item, idx) => {
                     return (
                         <div key={idx} className="article-container">
@@ -66,7 +92,7 @@ const Articles = ({ items }) => {
                         </div>
                     )
                 })
-            }
+            } */}
             </div>
             
         </div>
