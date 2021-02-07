@@ -1,16 +1,29 @@
+.main-container {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+}
+
 .articles-container {
     align-self: center;
-    max-height: 500px;
+    max-height: 600px;
+    
+    align-items: center;
+
     overflow: scroll;
     /* background-color: aquamarine; */
 }
 .articles-index {
-    background-color: grey;
+    justify-content: center;
+    justify-self: center;
+}
+.search-bar {
+    display: flex;
+    flex-direction: row;
 }
 
 .article-container {
-    border-radius: 2px;
-    border-color: black;
-    border: 5px;
-    outline: thin;
+    align-items: center;
+    text-align: center;
 }

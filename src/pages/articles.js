@@ -10,6 +10,9 @@ const Articles = ({ items }) => {
     // if (!items) return null
     let search
     let [searchTerm, setSearchTerm] = useState('')
+
+    let [sortByNew, setSortByNew] = useState(true)
+
     search = new JsSearch.Search('name')
     search.searchIndex = new JsSearch.UnorderedSearchIndex();
     search.indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
@@ -29,74 +32,86 @@ const Articles = ({ items }) => {
         setResults(searchResults)
     }
     
+    let SearchString = ({ article, indexOfSearchTerm} ) => {
+        let start = indexOfSearchTerm
+        let end = indexOfSearchTerm + searchTerm.length
+        return (
+            <>
+                <b>{article.content.substring(start, end)}</b>
+                {article.content.substring(end, end + 40)}{"...."}
+            </>
+        
+        )
+    }
+
     const renderArticleListing = (article, idx) => {
+        let indexOfSearchTerm = article.content.toLowerCase().indexOf(searchTerm)
         return (
             <div key={idx}>
-                <b>
-                    <a href={article.url}>
-                        {article.name}
-                    </a>
-                </b>
+                <div>
+                    <b>
+                        <a href={article.url}>
+                            {article.writtenDate}
+                        </a>
+                    </b>
+                </div>
+                <span>
+                    {
+                        indexOfSearchTerm != -1 && searchTerm.length
+                        ? <SearchString article={article} indexOfSearchTerm={indexOfSearchTerm} />
+                        : article.content.slice(0, 50) + "...."
+                    }
+                </span>
             </div>
         )
     }
 
     return (
         <div className={"articles-index"}>
-            <form>
-                <label>
-                    Search: 
-                    <input
-                        // onChange={e => updateSearchTerm(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key == 'Enter') {
-                                e.preventDefault()
+            <div className={"search-bar"}>
+                <form onSubmit={e => false}>
+                    <label>
+                        Search: 
+                        <input
+                            value={searchTerm}
+                            onChange={e => {
                                 setSearchTerm(e.target.value)
-                                updateSearch(e.target.value)
-                            }
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key == 'Enter') {
+                                    e.preventDefault()
+                                    setSearchTerm(e.target.value)
+                                    updateSearch(e.target.value)
+                                }
+                            }}
+                        />
+                    </label>
+                    <button
+                        onClick={e => {
+                            e.preventDefault()
+                            updateSearch(searchTerm)
                         }}
-                    />
-                </label>
-            </form>
-            {/* 
-            </input>
-            <button onClick={() => updateSearch(searchTerm)}>
-                click/enter
-            </button> */}
+                        onSubmit={e => false}
+                    >
+                        click/enter
+                        </button>
+                </form>
+                <button
+                    onClick={e => {
+                        setSortByNew(!sortByNew)
+                    }}
+                >
+                    sort by {sortByNew ? "old" : "new"}
+                </button>
+            </div>
             <div className="articles-container">
                 <FlatList 
                     list={results}
                     renderItem={renderArticleListing}
                     renderWhenEmpty={() => <div>List is empty!</div>}
+                    sortBy={[{key: "publishDate", descending: sortByNew}]}
                 />
-            {/* {
-                results.map((item, idx) => {
-                    return (
-                        <div key={idx} className="article-container">
-                            <a href={item.url}>
-                                <h2>
-                                    {item.name}{"\n"}
-                                </h2>
-                            </a> 
-                           
-                            <span>
-                                {
-                                    item.content.split("\n").map((line, i) => {
-                                        return (
-                                            <div key={"content-" + idx + i}>
-                                                {line}
-                                            </div>
-                                        )
-                                    })
-                                }
-
-                            </span>
-                        </div>
-                    )
-                })
-            } */}
             </div>
-            
         </div>
     )
 }

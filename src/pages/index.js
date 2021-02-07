@@ -1,6 +1,7 @@
 import * as React from "react"
 import Articles from './articles'
 import { graphql, useStaticQuery } from "gatsby"
+import Header from './Rel10Header.png'
 // markup
 const IndexPage = () => {
   const files = useStaticQuery(graphql`
@@ -25,11 +26,19 @@ const IndexPage = () => {
       let json = JSON.parse(edge.node.internal.content)
       item.content = json.contents
       item.url = json.url
-      item.publishDate = json.publishDate
+      item.writtenDate = json.publishDate
+      if (json.publishDate.includes("/")) {
+          json.publishDate = json.publishDate.split('/')[1]
+      }
+      item.publishDate = new Date(json.publishDate)
+      
       items.push(item)
   }
   return (
-    <Articles items={items} />
+    <div className={"main-container"}>
+        <img src={Header} alt={"header"} />
+        <Articles items={items} />
+    </div>
   )
 }
 
