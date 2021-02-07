@@ -9,5 +9,5 @@ module.exports = {
             },
         }
     ],
-    pathPrefix: '/release1.0/public/'
+    pathPrefix: '/release1.0'
 }

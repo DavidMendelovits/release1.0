@@ -8,9 +8,7 @@
 .articles-container {
     align-self: center;
     max-height: 600px;
-    
     align-items: center;
-
     overflow: scroll;
     /* background-color: aquamarine; */
 }
