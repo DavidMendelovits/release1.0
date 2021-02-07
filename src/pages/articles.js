@@ -7,7 +7,7 @@ import * as JsSearch from 'js-search';
 import FlatList from 'flatlist-react';
 
 const Articles = ({ items }) => {
-    if (!items) return (<div>Sorry!</div>)
+    // if (!items) return null
     let search
     let [searchTerm, setSearchTerm] = useState('')
     search = new JsSearch.Search('name')
@@ -16,7 +16,9 @@ const Articles = ({ items }) => {
 
     search.addIndex('name')
     search.addIndex('content')
-    search.addDocuments(items)
+    if (items) {
+        search.addDocuments(items)
+    }
     let [results, setResults] = useState(items);
     let updateSearch = (str) => {
         if (str == '') {
